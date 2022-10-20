@@ -3,7 +3,7 @@ ormconfig.ts
 yarn-error.log
 config/
 posts/
-.env
+*.env
 coverage
 .vscode
 
