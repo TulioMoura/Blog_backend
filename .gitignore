@@ -1,0 +1,9 @@
+node_modules/
+ormconfig.ts
+yarn-error.log
+config/
+posts/
+.env
+coverage
+.vscode
+
