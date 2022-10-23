@@ -107,7 +107,7 @@ usersRoutes.delete('/', async(req, res)=>{
         }
 
         const deleteUser = new deleteUserService;
-        deleteUser.execute(id)
+        await deleteUser.execute(id)
         return res.send();
     }   catch (err) {
         if (err instanceof BlogError) {
