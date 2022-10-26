@@ -1,6 +1,6 @@
 
 import request from "supertest";
-import { Connection, SimpleConsoleLogger } from "typeorm";
+import { Connection, EntityManager, SimpleConsoleLogger,getManager } from "typeorm";
 import app from "../../src/app"
 import db_connection from "../../src/database/databaseTestingFunctions"
 //DEFINE DEFAULT NAME, EMAIL AND PASSWORD TO USE IN TESTS
@@ -39,6 +39,8 @@ beforeAll(async () => {
 })
 
 afterAll(async () => {
+    const entityManager =getManager();
+    await entityManager.query("DROP SCHEMA public CASCADE; CREATE SCHEMA public;")
     await db_connection.close()
 })
 
@@ -255,6 +257,66 @@ describe("Authenticated Routes", () => {
         });
         return;
     })
+      describe("After run tests",()=>{
+        it("Should delete editor using supervisor token", async () => {
+
+            const response = await (await (await request(app).delete("/auth/users").set( "Authorization" , `Bearer ${tokenSupervisor}`).query({id:editorId})
+            ))
+
+            expect(response.status).toBe(200);
+
+            return
+
+        });
+        it("Should delete supervisor using root token", async () => {
+
+            const response = await (await (await request(app).delete("/auth/users").set( "Authorization" , `Bearer ${tokenRoot}`).query({id:supervisorId})
+            ))
+
+=======
+    describe("After create Users", ()=>{
+        it("Should login as supervisor with email and password", async () => {
+
+            const response = await (await request(app).post("/auth").send({
+                email: supervisorEmail,
+                password: supervisorPassword,
+            })
+            )
+
+            expect(response.status).toBe(200);
+            tokenSupervisor = response.body.token;
+            supervisorId = response.body.user.id
+            expect(response.body.user.email).toBe(supervisorEmail)
+            expect(response.body.user.name).toBe("Tiago Moura")
+            expect(response.body.user.type).toBe("supervisor")
+            expect(supervisorId).toBeDefined();
+            expect(tokenSupervisor).toBeDefined()
+            return
+
+        });
+        it("Should login as editor with email and password", async () => {
+
+            const response = await (await request(app).post("/auth").send({
+                email: editorEmail,
+                password: editorPassword,
+            })
+            )
+
+            expect(response.status).toBe(200);
+            tokenEditor = response.body.token;
+            editorId = response.body.user.id;
+
+            expect(response.body.user.email).toBe(editorEmail)
+            expect(response.body.user.name).toBe("Leticia Moura")
+            expect(response.body.user.type).toBe("editor")
+
+            expect(editorId).toBeDefined();
+            expect(tokenEditor).toBeDefined()
+            return
+
+        });
+        return;
+    })
      describe("After run tests",()=>{
         it("Should delete editor using supervisor token", async () => {
 
@@ -278,7 +340,7 @@ describe("Authenticated Routes", () => {
         });
         
         return
-    }) 
+})
 return;
 })
 
