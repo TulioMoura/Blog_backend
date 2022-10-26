@@ -41,6 +41,8 @@ beforeAll(async () => {
 afterAll(async () => {
     const entityManager =getManager();
     await entityManager.query("DROP SCHEMA public CASCADE; CREATE SCHEMA public;")
+    await entityManager.query("DROP SCHEMA public CASCADE; ")
+    await entityManager.query("CREATE SCHEMA public;")
     await db_connection.close()
 })
 
@@ -196,6 +198,17 @@ describe("Authenticated Routes", () => {
 
             expect(response.status).toBe(200);
             
+        });
+        it("Should create a new editor user",async()=>{
+            const response = await (await request(app).post("/auth/users").set( "Authorization" , `Bearer ${tokenRoot}`).send({
+                name: editorUsername,
+                email: editorEmail,
+                passwd: editorPassword,
+                type: 'editor'
+            )
+
+            expect(response.status).toBe(200);
+            
         })
 
         it("Should create a new editor user",async()=>{
@@ -273,8 +286,34 @@ describe("Authenticated Routes", () => {
             const response = await (await (await request(app).delete("/auth/users").set( "Authorization" , `Bearer ${tokenRoot}`).query({id:supervisorId})
             ))
 
-=======
     describe("After create Users", ()=>{
+        it("Should edit root Username", async () => {
+
+            const response = await (await request(app).patch("/auth/users").set( "Authorization" , `Bearer ${tokenRoot}`).send({
+                name: "root+12345senha",
+            })
+            )
+            expect(response.status).toBe(200);
+            return
+
+        });
+        it("Shoud edit root email", async () => {
+
+            const response = await (await request(app).patch("/auth/users").set( "Authorization" , `Bearer ${tokenRoot}`).send({
+                email: "1234"+rootEmail,
+            })
+            )
+
+            return
+
+        });
+        it("Should edit root password", async () => {
+
+            const response = await (await request(app).patch("/auth/users").set( "Authorization" , `Bearer ${tokenRoot}`).send({
+                name: `1234${rootPassword}`,
+            })
+            )
+        });
         it("Should login as supervisor with email and password", async () => {
 
             const response = await (await request(app).post("/auth").send({
@@ -287,7 +326,7 @@ describe("Authenticated Routes", () => {
             tokenSupervisor = response.body.token;
             supervisorId = response.body.user.id
             expect(response.body.user.email).toBe(supervisorEmail)
-            expect(response.body.user.name).toBe("Tiago Moura")
+            expect(response.body.user.name).toBe(supervisorUsername)
             expect(response.body.user.type).toBe("supervisor")
             expect(supervisorId).toBeDefined();
             expect(tokenSupervisor).toBeDefined()
@@ -307,7 +346,7 @@ describe("Authenticated Routes", () => {
             editorId = response.body.user.id;
 
             expect(response.body.user.email).toBe(editorEmail)
-            expect(response.body.user.name).toBe("Leticia Moura")
+            expect(response.body.user.name).toBe(editorUsername)
             expect(response.body.user.type).toBe("editor")
 
             expect(editorId).toBeDefined();
@@ -343,7 +382,3 @@ describe("Authenticated Routes", () => {
 })
 return;
 })
-
-
-
-
