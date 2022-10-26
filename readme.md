@@ -7,6 +7,16 @@ FIRSTUSEREMAIL
 FIRSTUSERPASSWORD
 DEVELOPMENT_PORT
 
+you will also need to create a file in src/config called auth.ts, that will store important config, for today you will need to export as default an jwt object with Secret and expiresIn parameters as you can see here:
+
+
+export default {
+    jwt:{
+        Secret:"importantstringyouwilluseasseedinhashing",
+        expiresIn:"7d"
+    }
+}
+
 to run the test suites, you also need an test database, and for this you need that vars in the test.env file, 
 If you want to run the tests in development mode you can use the dev.env file, whith the same structure of test.env but this database you will use for testing only. 
 

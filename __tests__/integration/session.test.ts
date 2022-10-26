@@ -20,8 +20,16 @@ const supervisorUsername = "Tiago Moura"
 const supervisorEmail = "tiagomoura@tdm.com"
 const supervisorPassword = "12345678"
 
+
+const editorUsername = "Leticia Moura"
+const editorEmail = "leticiamoura@tdm.com"
+const editorPassword = "açldfkçlkj"
+
 let tokenRoot : string
+let rootId:String;
 let tokenSupervisor : string
+let supervisorId:String;
+let editorId:String;
 let tokenEditor : string
 
 
@@ -71,7 +79,7 @@ describe("Authenticated Routes", () => {
 
 
 
-        it("Should login with email and password", async () => {
+        it("Should login as root with email and password", async () => {
 
             const response = await (await request(app).post("/auth").send({
                 email: rootEmail,
@@ -189,12 +197,23 @@ describe("Authenticated Routes", () => {
             expect(response.status).toBe(200);
             
         })
+
+        it("Should create a new editor user",async()=>{
+            const response = await (await request(app).post("/auth/users").set( "Authorization" , `Bearer ${tokenRoot}`).send({
+                name: editorUsername,
+                email: editorEmail,
+                passwd: editorPassword,
+                type: 'editor'
+            })
+            )
+
+            expect(response.status).toBe(200);
+            
+        })
+
         return
 
     })
-<<<<<<< Updated upstream
-
-=======
     describe("After create Users", ()=>{
         it("Should login as supervisor with email and password", async () => {
 
@@ -254,6 +273,66 @@ describe("Authenticated Routes", () => {
             const response = await (await (await request(app).delete("/auth/users").set( "Authorization" , `Bearer ${tokenRoot}`).query({id:supervisorId})
             ))
 
+=======
+    describe("After create Users", ()=>{
+        it("Should login as supervisor with email and password", async () => {
+
+            const response = await (await request(app).post("/auth").send({
+                email: supervisorEmail,
+                password: supervisorPassword,
+            })
+            )
+
+            expect(response.status).toBe(200);
+            tokenSupervisor = response.body.token;
+            supervisorId = response.body.user.id
+            expect(response.body.user.email).toBe(supervisorEmail)
+            expect(response.body.user.name).toBe("Tiago Moura")
+            expect(response.body.user.type).toBe("supervisor")
+            expect(supervisorId).toBeDefined();
+            expect(tokenSupervisor).toBeDefined()
+            return
+
+        });
+        it("Should login as editor with email and password", async () => {
+
+            const response = await (await request(app).post("/auth").send({
+                email: editorEmail,
+                password: editorPassword,
+            })
+            )
+
+            expect(response.status).toBe(200);
+            tokenEditor = response.body.token;
+            editorId = response.body.user.id;
+
+            expect(response.body.user.email).toBe(editorEmail)
+            expect(response.body.user.name).toBe("Leticia Moura")
+            expect(response.body.user.type).toBe("editor")
+
+            expect(editorId).toBeDefined();
+            expect(tokenEditor).toBeDefined()
+            return
+
+        });
+        return;
+    })
+     describe("After run tests",()=>{
+        it("Should delete editor using supervisor token", async () => {
+
+            const response = await (await (await request(app).delete("/auth/users").set( "Authorization" , `Bearer ${tokenSupervisor}`).query({id:editorId})
+            ))
+
+            expect(response.status).toBe(200);
+
+            return
+
+        });
+        it("Should delete supervisor using root token", async () => {
+
+            const response = await (await (await request(app).delete("/auth/users").set( "Authorization" , `Bearer ${tokenRoot}`).query({id:supervisorId})
+            ))
+
             expect(response.status).toBe(200);
 
             return
@@ -261,8 +340,7 @@ describe("Authenticated Routes", () => {
         });
         
         return
-    })  
->>>>>>> Stashed changes
+})
 return;
 })
 
