@@ -40,7 +40,6 @@ beforeAll(async () => {
 
 afterAll(async () => {
     const entityManager =getManager();
-    await entityManager.query("DROP SCHEMA public CASCADE; CREATE SCHEMA public;")
     await entityManager.query("DROP SCHEMA public CASCADE; ")
     await entityManager.query("CREATE SCHEMA public;")
     await db_connection.close()
@@ -205,24 +204,14 @@ describe("Authenticated Routes", () => {
                 email: editorEmail,
                 passwd: editorPassword,
                 type: 'editor'
-            )
-
-            expect(response.status).toBe(200);
-            
-        })
-
-        it("Should create a new editor user",async()=>{
-            const response = await (await request(app).post("/auth/users").set( "Authorization" , `Bearer ${tokenRoot}`).send({
-                name: editorUsername,
-                email: editorEmail,
-                passwd: editorPassword,
-                type: 'editor'
             })
             )
 
             expect(response.status).toBe(200);
             
         })
+
+        
 
         return
 
@@ -270,23 +259,30 @@ describe("Authenticated Routes", () => {
         });
         return;
     })
-      describe("After run tests",()=>{
-        it("Should delete editor using supervisor token", async () => {
+      
 
-            const response = await (await (await request(app).delete("/auth/users").set( "Authorization" , `Bearer ${tokenSupervisor}`).query({id:editorId})
-            ))
+    describe("After create Users", ()=>{
+        it("Should not edit root Username in put method", async () => {
 
-            expect(response.status).toBe(200);
-
+            const response = await (await request(app).put("/auth/users").set( "Authorization" , `Bearer ${tokenRoot}`).send({
+                name: "root+12345senha",
+            })
+            )
+            expect(response.status).toBe(400);
             return
 
         });
-        it("Should delete supervisor using root token", async () => {
+        it("Shoud not edit root email i put method", async () => {
 
-            const response = await (await (await request(app).delete("/auth/users").set( "Authorization" , `Bearer ${tokenRoot}`).query({id:supervisorId})
-            ))
+            const response = await (await request(app).put("/auth/users").set( "Authorization" , `Bearer ${tokenRoot}`).send({
+                email: "1234"+rootEmail,
+            })
+            )
 
-    describe("After create Users", ()=>{
+            expect(response.status).toBe(400);
+            return
+
+        });
         it("Should edit root Username", async () => {
 
             const response = await (await request(app).patch("/auth/users").set( "Authorization" , `Bearer ${tokenRoot}`).send({
@@ -304,58 +300,24 @@ describe("Authenticated Routes", () => {
             })
             )
 
+            expect(response.status).toBe(200);
             return
 
         });
-        it("Should edit root password", async () => {
+        it("Should not edit root password", async () => {
 
             const response = await (await request(app).patch("/auth/users").set( "Authorization" , `Bearer ${tokenRoot}`).send({
                 name: `1234${rootPassword}`,
             })
             )
-        });
-        it("Should login as supervisor with email and password", async () => {
 
-            const response = await (await request(app).post("/auth").send({
-                email: supervisorEmail,
-                password: supervisorPassword,
-            })
-            )
-
-            expect(response.status).toBe(200);
-            tokenSupervisor = response.body.token;
-            supervisorId = response.body.user.id
-            expect(response.body.user.email).toBe(supervisorEmail)
-            expect(response.body.user.name).toBe(supervisorUsername)
-            expect(response.body.user.type).toBe("supervisor")
-            expect(supervisorId).toBeDefined();
-            expect(tokenSupervisor).toBeDefined()
+            expect(response.status).toBe(400);
+            
             return
 
         });
-        it("Should login as editor with email and password", async () => {
-
-            const response = await (await request(app).post("/auth").send({
-                email: editorEmail,
-                password: editorPassword,
-            })
-            )
-
-            expect(response.status).toBe(200);
-            tokenEditor = response.body.token;
-            editorId = response.body.user.id;
-
-            expect(response.body.user.email).toBe(editorEmail)
-            expect(response.body.user.name).toBe(editorUsername)
-            expect(response.body.user.type).toBe("editor")
-
-            expect(editorId).toBeDefined();
-            expect(tokenEditor).toBeDefined()
-            return
-
-        });
-        return;
-    })
+        
+    })   
      describe("After run tests",()=>{
         it("Should delete editor using supervisor token", async () => {
 
@@ -380,5 +342,4 @@ describe("Authenticated Routes", () => {
         
         return
 })
-return;
-})
+    })

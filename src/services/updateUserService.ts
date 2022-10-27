@@ -19,22 +19,24 @@ interface User_Response{
 
 export default class updateUserService{
     public async execute({id, name, email}:Request):Promise<User_Response>{
-        if(!name||!email){
-            throw new BlogError("Invalid Params",400)
-        }
         const usersRepo = getRepository(User);
         const user = await usersRepo.findOne({
             where:{id}
         })
-
+        
         if(!user){
             throw new BlogError("User not Found",404)
         }
         
-            user.name = name;
-            user.email = email;
-
-        
+            if(!name&&!email){
+                throw new BlogError("No fields provided to update",400)
+            }
+            else if(!name){
+                user.email = email;
+            }
+            else if(!email){
+                user.name = name;
+            }
 
         await usersRepo.save(user)
         const User_Response:User_Response={

@@ -75,12 +75,41 @@ usersRoutes.post('/', async (req, res)=>{
    //    return res.json({message:'cria usuário com permissões menores que o criador'})
 })
 
-usersRoutes.patch('/', async (req, res)=>{
+usersRoutes.put('/', async (req, res)=>{
     try {
         const {user_id} = req.body;
-    const {name, email} = req.body ;
+    const {name} = req.body;
+    const {email} = req.body ;
+        if(!email || !name){
+            throw new BlogError("Necessary fields not provided", 400);
+        }
         const updateUser = new updateUserService;
         const updatedUser = await updateUser.execute({id:user_id, name, email})   
+        
+        return res.json(updatedUser);
+    }  catch (err) {
+        if (err instanceof BlogError) {
+            return res.status(err.code).json({ Error: err.message })
+        }
+        else {
+            return res.status(500).json({ Error: "failed to process request" })
+        }
+
+    }
+    
+    //edita o seu próprio usuário, um user só pode editar ele mesmo
+   // return res.json({message:'edita o usuário que está autenticado'})
+})
+
+usersRoutes.patch('/', async (req, res)=>{
+    try {
+        const { user_id , name, email} = req.body;
+        
+        if(!name&&!email){
+            throw new BlogError("No fields provided to update",400)
+        }
+        const updateUser = new updateUserService;
+        const updatedUser = await updateUser.execute({ id: user_id, name, email })   
         
         return res.json(updatedUser);
     }  catch (err) {

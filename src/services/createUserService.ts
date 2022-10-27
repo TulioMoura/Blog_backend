@@ -40,7 +40,6 @@ export default class createUserService {
 
         
 
-        console.log(passwd)
         const passwdHashed = await hash(passwd, 10)
 
         const user = usersRepository.create({
