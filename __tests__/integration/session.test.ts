@@ -272,78 +272,12 @@ describe("Authenticated Routes", () => {
 
             const response = await (await (await request(app).delete("/auth/users").set( "Authorization" , `Bearer ${tokenRoot}`).query({id:supervisorId})
             ))
-
-=======
-    describe("After create Users", ()=>{
-        it("Should login as supervisor with email and password", async () => {
-
-            const response = await (await request(app).post("/auth").send({
-                email: supervisorEmail,
-                password: supervisorPassword,
-            })
-            )
-
-            expect(response.status).toBe(200);
-            tokenSupervisor = response.body.token;
-            supervisorId = response.body.user.id
-            expect(response.body.user.email).toBe(supervisorEmail)
-            expect(response.body.user.name).toBe("Tiago Moura")
-            expect(response.body.user.type).toBe("supervisor")
-            expect(supervisorId).toBeDefined();
-            expect(tokenSupervisor).toBeDefined()
-            return
-
-        });
-        it("Should login as editor with email and password", async () => {
-
-            const response = await (await request(app).post("/auth").send({
-                email: editorEmail,
-                password: editorPassword,
-            })
-            )
-
-            expect(response.status).toBe(200);
-            tokenEditor = response.body.token;
-            editorId = response.body.user.id;
-
-            expect(response.body.user.email).toBe(editorEmail)
-            expect(response.body.user.name).toBe("Leticia Moura")
-            expect(response.body.user.type).toBe("editor")
-
-            expect(editorId).toBeDefined();
-            expect(tokenEditor).toBeDefined()
-            return
-
-        });
-        return;
-    })
-     describe("After run tests",()=>{
-        it("Should delete editor using supervisor token", async () => {
-
-            const response = await (await (await request(app).delete("/auth/users").set( "Authorization" , `Bearer ${tokenSupervisor}`).query({id:editorId})
-            ))
-
-            expect(response.status).toBe(200);
-
-            return
-
-        });
-        it("Should delete supervisor using root token", async () => {
-
-            const response = await (await (await request(app).delete("/auth/users").set( "Authorization" , `Bearer ${tokenRoot}`).query({id:supervisorId})
-            ))
-
-            expect(response.status).toBe(200);
-
-            return
-
-        });
-        
-        return
+        })
+    
 })
 return;
 })
 
 
 
-
+ 

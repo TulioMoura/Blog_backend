@@ -24,8 +24,8 @@
     "build": "tsc",
     "dev:server": "ts-node-dev --inspect --transpile-only --ignore-watch node_modules src/server.ts",
     "typeorm": "ts-node-dev ./node_modules/typeorm/cli.js",
-    "pretest": "set NODE_ENV=test &&yarn typeorm migrations:revert && yarn typeorm migrations:run",
-    "test": "set NODE_ENV=test && yarn jest --detectOpenHandles"
+    "pretest": "set NODE_ENV=test &&npm run typeorm migrations:revert && npm run typeorm migrations:run",
+    "test": "set NODE_ENV=test && jest --detectOpenHandles"
   },
   "devDependencies": {
     "@types/bcryptjs": "^2.4.2",
