@@ -34,15 +34,15 @@ categoriesRoutes.post('/', async (req, res)=>{
         const createCategory = new createCategoryService
 
         const category = await createCategory.execute({name,creator})
-
-        return res.json({category})
+        return res.json(category)
         
     } catch (error) {
+        console.log(error)
         if(error instanceof Error){
-             return res.json({error:error.message})
+             return res.status(500).json({error:error.message})
         }
         else{
-            return res.json({error: "failed to process request"})
+            return res.status(500).json({error: "failed to process request"})
         }
        
     }

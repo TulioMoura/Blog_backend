@@ -27,6 +27,7 @@ publicRoutes.get('/', async(req, res)=>{
     try {
         const {id} = req.query
         if(!id){
+            console.log("aqui")
             const postsRepo = getRepository(Post)
             const posts = await postsRepo.createQueryBuilder("post").leftJoinAndSelect("post.author", "author").getMany()
             let sanitizedPosts:sanitizedPost[];
@@ -51,21 +52,26 @@ publicRoutes.get('/', async(req, res)=>{
             })
            return res.json({posts}) 
         }
-        if(typeof(id)!="string"){
+        else if(typeof(id)!="string"){
+            console.log("aqui2")
             throw new Error("invalid post Id provided")
         }
-
-        const findPost= new findPostService;
+        else{
+            const findPost= new findPostService;
         const post = await  findPost.execute(id)
         console.log(post)
         return res.json(post)
+        }
+        
     
 
     }  catch (err) {
         if (err instanceof BlogError) {
+            console.log(err)
             return res.status(err.code).json({ Error: err.message })
         }
         else {
+            console.log(err)
             return res.status(500).json({ Error: "failed to process request" })
         }
 

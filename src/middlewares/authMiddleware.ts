@@ -6,6 +6,8 @@ import auth from "../config/auth";
 
 interface JwtPayload{
     id:string,
+    iat:number,
+    exp:number
 }
 
 async function authMiddleware(req: Request, res:Response, next:NextFunction){
@@ -17,14 +19,18 @@ async function authMiddleware(req: Request, res:Response, next:NextFunction){
     else{
 
 const [bearer ,token] = authorization.split(' ');
-    let decodedToken; 
+    let decodedToken = {
+        id: '',
+        iat: 0,
+        exp: 0
+      }
     try{
         decodedToken = await verify(token,auth.jwt.Secret) as JwtPayload;
     }catch(error){
         res.status(403).json({error:"Invalid JWT token"})
     }
     
-    const id = decodedToken
+    const {id} = decodedToken
     req.body.user_id = id;
     next();
 

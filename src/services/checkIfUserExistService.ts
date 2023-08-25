@@ -4,7 +4,7 @@ import BlogError from "../Errors";
 class checkIfUserExistService{
     public async execute(id : string): Promise <User>{
         const users = getRepository(User)
-
+        //console.log(id)
         const existUser = await users.findOne({
             where: {
                 id
